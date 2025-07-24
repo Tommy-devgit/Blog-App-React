@@ -17,12 +17,13 @@ export default function App() {
           // bgRepeat="no-repeat"
           >
       <Navbar />
-      <Box maxW="960px" mx="auto" p={4}>
+      <Box minW="960px" >
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="/create" element={<CreatePost />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/post/:id" element={<PostDetails />} />
+
         </Routes>
       </Box>
     </Box>

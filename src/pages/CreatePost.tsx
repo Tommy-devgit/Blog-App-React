@@ -44,23 +44,23 @@ export default function CreatePost() {
   };
 
   return (
-    <Flex w={"full"}>
-      <Box>
-        <Heading fontSize={"7xl"} color={"black"}>Share <br /> whats <br />on Your <br /> Mind</Heading>
-      </Box>
-      <Box minW="600px" mx="auto" bg={"blackAlpha.800"} p={8} borderRadius={10}>
+    <Flex w={"full"} p={10} justifyContent={"center"} alignItems={"center"} minH={"100vh"} flexDirection={"column"} gap={4}> 
+      <Heading>Share your Thoughts here....</Heading>
+      <Box minW="600px" mx="auto" bg={"white"} p={8} borderRadius={10} border={"1px solid black"} boxShadow={"2xl"}>
         <form onSubmit={handleSubmit}>
           <FormControl mb={4}>
             <FormLabel>Title</FormLabel>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input value={title} placeholder="Title For Your Blog" onChange={(e) => setTitle(e.target.value)} border={"1px solid black"}/>
           </FormControl>
 
           <FormControl mb={4}>
             <FormLabel>Content</FormLabel>
             <Textarea
               value={content}
+              placeholder="Describe Your Blog Here"
               onChange={(e) => setContent(e.target.value)}
               rows={6}
+              border={"1px solid black"}
             />
           </FormControl>
 
