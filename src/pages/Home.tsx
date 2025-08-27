@@ -1,26 +1,7 @@
-import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  Spinner,
-  Link as ChakraLink,
-  Flex,
-  Center,
-} from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../lib/firebase";
 import { useEffect, useState } from "react";
-import image from "../assets/thought-catalog-505eectW54k-unsplash.jpg";
-
-type Post = {
-  id: string;
-  title: string;
-  content: string;
-  createdAt?: any; 
-};
-
+import { supabase } from "../supabase";
+import BlogCard, { type Post } from "../components/BlogCard";
+import ThreeDModelWrapper from "../components/ThreeModelWrapper";
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,52 +9,67 @@ export default function Home() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-        const docs = snapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<Post, "id">;
-        return {
-          id: doc.id,
-          ...data,
-        };
-      });
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-        setPosts(docs);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error("Error fetching posts:", error);
+      } else {
+        setPosts(data || []);
       }
+      setLoading(false);
     };
 
     fetchPosts();
   }, []);
 
-  if (loading) return <Spinner size="lg" />;
+  if (loading) {
+    return <div className="p-6 text-center">Loading posts...</div>;
+  }
 
   return (
-    <>
-      <Flex minH={"100vh"} bgImg={image} bgRepeat={"none"} bgSize={"cover"} width={"full"} p={10} justifyContent={"center"} alignItems={"center"}>
-        <Box>
-          <Heading fontSize={"9xl"} textAlign={"center"} color={"white"}>You Have Something on your Mind, <br />
-          Why not Share It?</Heading>
-        </Box>
-      </Flex>
-      <VStack align="start" spacing={6}>
-        {posts.map((post) => (
-          <Box key={post.id} p={4} borderWidth="1px" rounded="md" w="100%">
-            <Heading size="md" mb={2}>
-              <ChakraLink as={Link} to={`/post/${post.id}`}>
-                {post.title}
-              </ChakraLink>
-            </Heading>
-            <Text noOfLines={2}>{post.content}</Text>
-          </Box>
-        ))}
-        {posts.length === 0 && <Text>No posts yet.</Text>}
-      </VStack>
-    </>
-    
+    <div className="p-6 max-w-7xl mx-auto">
+      <section className="h-[100vh] flex items-center justify-center text-center flex-col gap-10 mb-20">
+        <div className="flex flex-1/2 m-20">
+          <ThreeDModelWrapper />
+          <h1 className="text-6xl lg:text-9xl text-white font-light">
+            Discover Our Latest Blogs
+          </h1>
+        </div>
+        <p className="text-gray-400 text-md">
+          Discover a space where your ideas matter. Write, publish,
+          and connect with readers who value authentic stories and fresh perspectives.
+          Whether it’s thoughts, experiences, or creativity — your words have a home here.
+        </p>
+      </section>
+
+      <h1 className="text-4xl font-light mb-8 text-white drop-shadow-lg">
+        Latest Posts
+      </h1>
+
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+  {posts.slice(0, 6).map((post) => (  // only show first 6
+        <BlogCard
+          key={post.id}
+          id={post.id}
+          title={post.title}
+          content={post.content}
+          author={post.author}
+          thumbnail={post.thumbnail}
+        />
+      ))}
+      </div>
+
+      <div className="text-center mt-10">
+      <a
+        href="/blogs"
+        className="text-white bg-gray-800 px-6 py-3 rounded-lg hover:bg-gray-700 transition"
+      >
+        See All Posts
+      </a>
+      </div>
+    </div>
   );
 }
