@@ -18,7 +18,6 @@ const Signup: React.FC = () => {
     setErrorMsg("");
 
     try {
-      // 1️⃣ Upload profile image to Cloudinary if exists
       let imageUrl = "";
       if (profileImage) {
         const formData = new FormData();
@@ -31,9 +30,7 @@ const Signup: React.FC = () => {
         const data = await res.json();
         imageUrl = data.secure_url;
       }
-
-      // 2️⃣ Sign up with Supabase
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {

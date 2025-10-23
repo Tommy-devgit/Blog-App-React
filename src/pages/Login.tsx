@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     setErrorMsg("");
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       navigate("/profile"); // redirect to profile after login
     } catch (error: any) {
