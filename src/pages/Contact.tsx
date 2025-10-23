@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Contact() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center px-6 py-16 ">
